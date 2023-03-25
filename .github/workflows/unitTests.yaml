@@ -4,13 +4,16 @@ on:
   push:
     branches:
       - main
+      - 3.x
       - 2.x
   pull_request:
   workflow_dispatch:
   schedule:
     - cron: '05 7 * * *' # 07:00 UTC every day
 
-
+env:
+  # Workaround for kotlin sample multithreading issue: https://youtrack.jetbrains.com/issue/KT-43894
+  MAVEN_OPTS: "-Didea.home.path=${{ vars.RUNNER_TEMP }} -Didea.ignore.disabled.plugins=true"
 jobs:
   unitTests:
     runs-on: ubuntu-20.04
