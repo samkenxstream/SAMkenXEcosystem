@@ -350,7 +350,7 @@ window.onload = function() {
 <li><a href="#secret-manager">20. Secret Manager</a>
 <ul class="sectlevel2">
 <li><a href="#dependency-setup-2">20.1. Dependency Setup</a></li>
-<li><a href="#secret-manager-property-source">20.2. Secret Manager Property Source</a></li>
+<li><a href="#secret-manager-config-data-resource">20.2. Secret Manager Config Data Resource</a></li>
 <li><a href="#secret-manager-template">20.3. Secret Manager Template</a></li>
 <li><a href="#refresh-secrets-without-restarting-the-application">20.4. Refresh secrets without restarting the application</a></li>
 <li><a href="#allow-default-secret">20.5. Allow default secret</a></li>
@@ -407,7 +407,7 @@ window.onload = function() {
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>4.0.0-SNAPSHOT</strong></p>
+<p><strong>4.1.4-SNAPSHOT</strong></p>
 </div>
 </div>
 </div>
@@ -539,7 +539,7 @@ Instead, the version of the BOM you’re using determines the versions of the us
        &lt;dependency&gt;
            &lt;groupId&gt;com.google.cloud&lt;/groupId&gt;
            &lt;artifactId&gt;spring-cloud-gcp-dependencies&lt;/artifactId&gt;
-           &lt;version&gt;4.0.0-SNAPSHOT&lt;/version&gt;
+           &lt;version&gt;4.1.4-SNAPSHOT&lt;/version&gt;
            &lt;type&gt;pom&lt;/type&gt;
            &lt;scope&gt;import&lt;/scope&gt;
        &lt;/dependency&gt;
@@ -553,7 +553,7 @@ Instead, the version of the BOM you’re using determines the versions of the us
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-none hljs">dependencies {
-    implementation platform("com.google.cloud:spring-cloud-gcp-dependencies:4.0.0-SNAPSHOT")
+    implementation platform("com.google.cloud:spring-cloud-gcp-dependencies:4.1.4-SNAPSHOT")
 }</code></pre>
 </div>
 </div>
@@ -573,6 +573,10 @@ You do <strong>not</strong> need to include the underlying <code>spring-cloud-gc
 </div>
 <div class="paragraph">
 <p>A summary of these artifacts are provided below.</p>
+</div>
+<div class="paragraph">
+<p>Aside from these modules, we also provide additional starters with auto-configurations to various Google Client Libraries.
+Refer for the full list <a href="https://github.com/GoogleCloudPlatform/spring-cloud-gcp/tree/main/spring-cloud-previews/README.md">here</a>.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -10916,7 +10920,7 @@ A detailed summary of its features can be found in the <a href="https://cloud.go
 <div class="ulist">
 <ul>
 <li>
-<p>A property source which allows you to specify and load the secrets of your Google Cloud project into your application context as a <a href="https://cloud.spring.io/spring-cloud-commons/multi/multi__spring_cloud_context_application_context_services.html#_the_bootstrap_application_context">Bootstrap Property Source</a>.</p>
+<p>A config data resource which allows you to specify and load the secrets of your Google Cloud project into your application context using <a href="https://spring.io/blog/2020/08/14/config-file-processing-in-spring-boot-2-4">Spring Boot&#8217;s Config Data API</a>.</p>
 </li>
 <li>
 <p>A <code>SecretManagerTemplate</code> which allows you to read, write, and update secrets in Secret Manager.</p>
@@ -10970,6 +10974,12 @@ This can be overridden using the authentication properties.</p>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Default value</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>spring.cloud.gcp.secretmanager.enabled</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enables the Secret Manager integration.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>true</code></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>spring.cloud.gcp.secretmanager.credentials.location</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">OAuth2 credentials for authenticating to the Google Cloud Secret Manager API.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
@@ -10999,15 +11009,13 @@ If set to <code>true</code>, <code>null</code> will be returned when accessing a
 </div>
 </div>
 <div class="sect2">
-<h3 id="secret-manager-property-source"><a class="anchor" href="#secret-manager-property-source"></a><a class="link" href="#secret-manager-property-source">20.2. Secret Manager Property Source</a></h3>
+<h3 id="secret-manager-config-data-resource"><a class="anchor" href="#secret-manager-config-data-resource"></a><a class="link" href="#secret-manager-config-data-resource">20.2. Secret Manager Config Data Resource</a></h3>
 <div class="paragraph">
-<p>The Spring Framework on Google Cloud integration for Google Cloud Secret Manager enables you to use Secret Manager as a bootstrap property source.</p>
+<p>The Spring Framework on Google Cloud integration for Google Cloud Secret Manager enables you to use Secret Manager as an external config data resource.
+This allows you to specify and load secrets from Google Cloud Secret Manager as properties into the application context using <a href="https://spring.io/blog/2020/08/14/config-file-processing-in-spring-boot-2-4">Spring Boot&#8217;s Config Data API</a>.</p>
 </div>
 <div class="paragraph">
-<p>This allows you to specify and load secrets from Google Cloud Secret Manager as properties into the application context during the <a href="https://cloud.spring.io/spring-cloud-commons/reference/html/#the-bootstrap-application-context">Bootstrap Phase</a>, which refers to the initial phase when a Spring application is being loaded.</p>
-</div>
-<div class="paragraph">
-<p>The Secret Manager property source uses the following syntax to specify secrets:</p>
+<p>The Secret Manager config data resource uses the following syntax to specify secrets:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -11304,7 +11312,7 @@ It enables the use of the Google Runtime Configuration API as a source for Sprin
 <pre class="highlightjs highlight"><code data-lang="xml" class="language-xml hljs">&lt;dependency&gt;
     &lt;groupId&gt;com.google.cloud&lt;/groupId&gt;
     &lt;artifactId&gt;spring-cloud-gcp-starter-config&lt;/artifactId&gt;
-    &lt;version&gt;4.0.0-SNAPSHOT&lt;/version&gt;
+    &lt;version&gt;4.1.4-SNAPSHOT&lt;/version&gt;
 &lt;/dependency&gt;</code></pre>
 </div>
 </div>
@@ -11316,7 +11324,7 @@ It enables the use of the Google Runtime Configuration API as a source for Sprin
 <pre class="highlightjs highlight"><code class="language-none hljs">dependencies {
     compile group: 'org.springframework.cloud',
     name: 'spring-cloud-gcp-starter-config',
-    version: '4.0.0-SNAPSHOT'
+    version: '4.1.4-SNAPSHOT'
 }</code></pre>
 </div>
 </div>
@@ -12026,9 +12034,6 @@ Note that <code>spring.cloud.gcp.trace.enabled=true</code> is still required if 
 </div>
 <div class="ulist">
 <ul>
-<li>
-<p><code>spring.cloud.gcp.secretmanager.enabled</code></p>
-</li>
 <li>
 <p><code>spring.cloud.gcp.secretmanager.legacy</code></p>
 </li>
