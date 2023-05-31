@@ -890,7 +890,8 @@ Trader t = new Trader();
 this.datastoreTemplate.save(t);
 ```
 
-The `save` method behaves as update-or-insert.
+The `save` method behaves as update-or-insert. 
+In contrast, the `insert` method will fail if an entity already exists.
 
 ##### Partial Update
 
@@ -942,6 +943,15 @@ another method also annotated, then both methods will work within the
 same transaction. `performTransaction` cannot be used in
 `@Transactional` annotated methods because Cloud Datastore does not
 support transactions within transactions.
+
+Other Google Cloud database-related integrations like Spanner and Firestore can
+introduce `PlatformTransactionManager` beans, and can interfere with Datastore
+Transaction Manager. To disambiguate, explicitly specify the name of the
+transaction manager bean for such `@Transactional` methods. Example:
+
+```java
+@Transactional(transactionManager = "datastoreTransactionManager")
+```
 
 #### Read-Write Support for Maps
 
